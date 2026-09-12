@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Premiers nombres — CP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#EAF5FB;
+    --sky-deep:#D5ECF7;
+    --sand:#FFF3D9;
+    --leaf:#CDEAB6;
+    --leaf-deep:#9FD489;
+    --sun:#FFB238;
+    --sun-deep:#F08A1E;
+    --coral:#FF7A68;
+    --coral-deep:#E75F4E;
+    --berry:#7C6FE0;
+    --berry-deep:#5F50CC;
+    --ink:#233246;
+    --ink-soft:#5B6B80;
+    --paper:#FFFFFF;
+    --ok:#3FAE73;
+    --ok-deep:#2E8F5C;
+    --shadow: 0 10px 0 rgba(35,50,70,0.10);
+    --font-display:'Baloo 2', system-ui, sans-serif;
+    --font-body:'Nunito', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, var(--sky-deep) 0%, var(--sky) 45%, var(--sky) 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* decorative rolling hills, fixed, behind content */
+  .scenery{
+    position:fixed; left:0; right:0; bottom:0; height:38vh; z-index:0; pointer-events:none;
+  }
+  .scenery svg{width:100%; height:100%; display:block;}
+  #app{position:relative; z-index:1; max-width:920px; margin:0 auto; padding:22px 18px 60px;}
+
+  header.top{
+    display:flex; align-items:center; gap:14px; justify-content:center;
+    margin-bottom:6px;
+  }
+  .mascot{width:64px; height:64px; flex:none;}
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:800;
+    font-size:clamp(28px,6vw,42px);
+    margin:0;
+    letter-spacing:0.3px;
+    color:var(--berry-deep);
+    text-shadow: 2px 3px 0 rgba(255,255,255,0.6);
+  }
+  .subtitle{
+    text-align:center; color:var(--ink-soft); font-weight:700; margin:0 0 22px; font-size:15px;
+  }
+
+  .screen{display:none;}
+  .screen.active{display:block; animation:pop .35s ease;}
+  @keyframes pop{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* profile bar */
+  .profile-bar{
+    display:flex; align-items:center; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:var(--paper); border-radius:22px; padding:10px 16px; box-shadow:var(--shadow);
+    margin:0 auto 24px; max-width:480px;
+  }
+  .profile-bar label{font-weight:700; color:var(--ink-soft); font-size:14px;}
+  .profile-bar input{
+    font-family:var(--font-body); font-weight:700; font-size:15px; color:var(--ink);
+    border:2px solid var(--sky-deep); border-radius:14px; padding:7px 12px; width:150px;
+    outline:none; background:var(--sky);
+  }
+  .profile-bar input:focus{border-color:var(--berry);}
+  .icon-btn{
+    border:none; background:var(--sand); border-radius:14px; padding:8px 12px; cursor:pointer;
+    font-weight:700; font-family:var(--font-body); color:var(--ink); font-size:14px;
+    box-shadow: 0 4px 0 rgba(35,50,70,0.12);
+  }
+  .icon-btn:active{transform:translateY(3px); box-shadow:none;}
+
+  /* level grid */
+  .levels{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:18px;
+    margin-bottom:26px;
+  }
+  .level-card{
+    background:var(--paper);
+    border-radius:34px 34px 30px 30px / 40px 40px 26px 26px;
+    padding:20px 18px 18px;
+    box-shadow:var(--shadow);
+    text-align:center;
+    position:relative;
+  }
+  .level-card .badge{
+    width:58px; height:58px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px; margin:0 auto 10px;
+  }
+  .level-card h3{
+    font-family:var(--font-display); font-size:20px; margin:0 0 4px; color:var(--ink);
+  }
+  .level-card p{font-size:13px; color:var(--ink-soft); margin:0 0 14px; font-weight:600;}
+  .stage-row{display:flex; gap:8px; justify-content:center;}
+  .stage-btn{
+    flex:1; border:none; cursor:pointer; font-family:var(--font-body); font-weight:800;
+    color:#fff; border-radius:16px; padding:10px 6px; font-size:13.5px;
+    box-shadow:0 4px 0 rgba(0,0,0,0.15);
+    display:flex; flex-direction:column; gap:2px; align-items:center;
+  }
+  .stage-btn small{font-weight:700; opacity:.9; font-size:10.5px;}
+  .stage-btn:active{transform:translateY(3px); box-shadow:none;}
+  .stars-mini{font-size:11px; letter-spacing:1px;}
+
+  .level-1 .badge{background:#FFE2C2; color:var(--sun-deep);}
+  .level-2 .badge{background:#DCEFFB; color:#2C86B7;}
+  .level-3 .badge{background:#E7E2FB; color:var(--berry-deep);}
+  .level-4 .badge{background:#DCF3E4; color:var(--ok-deep);}
+
+  .stage-btn.a{background:linear-gradient(180deg, var(--sun), var(--sun-deep));}
+  .stage-btn.b{background:linear-gradient(180deg, var(--coral), var(--coral-deep));}
+
+  .cta-progress{
+    display:block; margin:0 auto; background:var(--berry); color:#fff; border:none;
+    font-family:var(--font-display); font-weight:700; font-size:16px; padding:12px 26px;
+    border-radius:20px; cursor:pointer; box-shadow:0 5px 0 var(--berry-deep);
+  }
+  .cta-progress:active{transform:translateY(4px); box-shadow:none;}
+
+  /* game screen */
+  .game-card{
+    background:var(--paper); border-radius:36px 36px 30px 30px/44px 44px 26px 26px;
+    padding:26px 22px; box-shadow:var(--shadow); max-width:560px; margin:0 auto;
+  }
+  .game-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .game-top .qcount{font-weight:800; color:var(--ink-soft); font-size:14px;}
+  .progress-track{height:10px; background:var(--sky-deep); border-radius:8px; flex:1; margin:0 14px; overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--sun),var(--coral)); width:0%; transition:width .35s ease;}
+  .quit-btn{background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);}
+
+  .prompt{
+    font-family:var(--font-display); font-size:clamp(19px,4.6vw,24px); font-weight:700;
+    text-align:center; margin:6px 0 18px; color:var(--ink);
+  }
+  .visual-row{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;
+    min-height:56px; margin-bottom:18px; font-size:32px;
+  }
+  .visual-row.big-number{font-family:var(--font-display); font-size:76px; font-weight:800; color:var(--berry-deep); min-height:90px;}
+  .compare-row{display:flex; gap:22px; justify-content:center; align-items:center; margin-bottom:6px;}
+  .compare-num{
+    font-family:var(--font-display); font-size:44px; font-weight:800; color:var(--ink);
+    background:var(--sky); border-radius:20px; padding:10px 22px;
+  }
+  .vs{font-weight:800; color:var(--ink-soft); font-size:15px;}
+
+  .options{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+  }
+  .options.two-col-dots{grid-template-columns:repeat(2,1fr);}
+  .opt-btn{
+    border:none; cursor:pointer; background:var(--sky); border-radius:20px;
+    padding:16px 10px; font-family:var(--font-display); font-weight:700;
+    font-size:26px; color:var(--ink); box-shadow:0 5px 0 var(--sky-deep);
+    transition:transform .12s ease;
+  }
+  .opt-btn:active{transform:translateY(4px); box-shadow:none;}
+  .opt-btn.correct{background:var(--ok); color:#fff; box-shadow:0 5px 0 var(--ok-deep);}
+  .opt-btn.wrong{background:var(--coral); color:#fff; box-shadow:0 5px 0 var(--coral-deep);}
+  .opt-btn .dots{font-size:20px; letter-spacing:2px; display:block;}
+  .opt-btn:disabled{cursor:default;}
+
+  .feedback-line{
+    text-align:center; font-weight:800; min-height:26px; margin-top:14px; font-size:16px;
+  }
+  .feedback-line.ok{color:var(--ok-deep);}
+  .feedback-line.no{color:var(--coral-deep);}
+
+  /* results screen */
+  .result-card{
+    background:var(--paper); border-radius:36px; padding:34px 24px; text-align:center;
+    max-width:480px; margin:0 auto; box-shadow:var(--shadow);
+  }
+  .result-stars{font-size:52px; letter-spacing:8px; margin:10px 0 6px;}
+  .result-score{font-family:var(--font-display); font-size:22px; font-weight:800; margin-bottom:4px;}
+  .result-msg{color:var(--ink-soft); font-weight:700; margin-bottom:22px;}
+  .result-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .btn-primary,.btn-secondary{
+    border:none; cursor:pointer; font-family:var(--font-body); font-weight:800; font-size:14.5px;
+    padding:12px 20px; border-radius:16px;
+  }
+  .btn-primary{background:var(--berry); color:#fff; box-shadow:0 5px 0 var(--berry-deep);}
+  .btn-secondary{background:var(--sky); color:var(--ink); box-shadow:0 5px 0 var(--sky-deep);}
+  .btn-primary:active,.btn-secondary:active{transform:translateY(4px); box-shadow:none;}
+
+  /* progress screen */
+  .progress-header{display:flex; align-items:center; justify-content:space-between; max-width:640px; margin:0 auto 16px;}
+  .progress-header h2{font-family:var(--font-display); margin:0; font-size:24px; color:var(--berry-deep);}
+  .back-btn{background:var(--sky); border:none; border-radius:14px; padding:9px 16px; font-weight:800; cursor:pointer; color:var(--ink);}
+  .stats-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px; max-width:640px; margin:0 auto 22px;}
+  .stat-box{background:var(--paper); border-radius:22px; padding:16px; text-align:center; box-shadow:var(--shadow);}
+  .stat-box .num{font-family:var(--font-display); font-size:28px; font-weight:800; color:var(--berry-deep);}
+  .stat-box .lbl{font-size:12.5px; color:var(--ink-soft); font-weight:700;}
+  .history-list{max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:8px;}
+  .history-row{
+    background:var(--paper); border-radius:16px; padding:10px 16px; display:flex;
+    justify-content:space-between; align-items:center; box-shadow:0 4px 0 rgba(35,50,70,0.06);
+    font-size:13.5px; font-weight:700; color:var(--ink-soft);
+  }
+  .history-row span.stars{color:var(--sun-deep); letter-spacing:1px;}
+  .empty-note{text-align:center; color:var(--ink-soft); font-weight:700; padding:30px 10px;}
+  .stage-tag{
+    display:inline-block; font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:10px;
+    background:var(--sky-deep); color:var(--ink); margin-left:6px;
+  }
+
+  footer.note{text-align:center; color:var(--ink-soft); font-size:11.5px; margin-top:34px; font-weight:600;}
+
+  @media (max-width:420px){
+    .options{grid-template-columns:repeat(2,1fr);}
+    .compare-num{font-size:36px; padding:8px 16px;}
+    .visual-row.big-number{font-size:60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="scenery">
+  <svg viewBox="0 0 1200 300" preserveAspectRatio="none">
+    <path d="M0,180 C200,120 380,220 620,160 C860,100 1000,190 1200,150 L1200,300 L0,300 Z" fill="#CDEAB6"/>
+    <path d="M0,220 C220,190 420,260 650,210 C880,160 1050,240 1200,210 L1200,300 L0,300 Z" fill="#9FD489" opacity="0.85"/>
+  </svg>
+</div>
+
+<div id="app">
+
+  <header class="top">
+    <svg class="mascot" viewBox="0 0 100 100">
+      <circle cx="50" cy="55" r="34" fill="#FFB238"/>
+      <circle cx="34" cy="34" r="12" fill="#FFB238"/>
+      <circle cx="66" cy="34" r="12" fill="#FFB238"/>
+      <circle cx="34" cy="36" r="6" fill="#FFF3D9"/>
+      <circle cx="66" cy="36" r="6" fill="#FFF3D9"/>
+      <circle cx="40" cy="52" r="5" fill="#233246"/>
+      <circle cx="60" cy="52" r="5" fill="#233246"/>
+      <path d="M38,66 Q50,76 62,66" stroke="#233246" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="26" cy="58" r="5" fill="#FF9F87" opacity="0.7"/>
+      <circle cx="74" cy="58" r="5" fill="#FF9F87" opacity="0.7"/>
+    </svg>
+    <h1 class="title">Premiers nombres</h1>
+  </header>
+  <p class="subtitle">Compter, reconnaître, comparer et calculer — niveau CP</p>
+
+  <!-- HOME SCREEN -->
+  <section id="screen-home" class="screen active">
+    <div class="profile-bar">
+      <label for="student-name">Qui joue ?</label>
+      <input id="student-name" type="text" maxlength="18" placeholder="Prénom">
+      <button class="icon-btn" id="btn-progress">⭐ Mes progrès</button>
+    </div>
+
+    <div class="levels">
+      <div class="level-card level-1">
+        <div class="badge">🔢</div>
+        <h3>Compter</h3>
+        <p>Combien d'objets vois-tu ?</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="compter" data-stage="a">Étape 1<small>jusqu'à 10</small><span class="stars-mini" data-stars="compter-a"></span></button>
+          <button class="stage-btn b" data-level="compter" data-stage="b">Étape 2<small>jusqu'à 20</small><span class="stars-mini" data-stars="compter-b"></span></button>
+        </div>
+      </div>
+
+      <div class="level-card level-2">
+        <div class="badge">🔎</div>
+        <h3>Reconnaître</h3>
+        <p>Relie le nombre à la bonne quantité</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="reconnaitre" data-stage="a">Étape 1<small>jusqu'à 10</small><span class="stars-mini" data-stars="reconnaitre-a"></span></button>
+          <button class="stage-btn b" data-level="reconnaitre" data-stage="b">Étape 2<small>jusqu'à 20</small><span class="stars-mini" data-stars="reconnaitre-b"></span></button>
+        </div>
+      </div>
+
+      <div class="level-card level-3">
+        <div class="badge">⚖️</div>
+        <h3>Comparer</h3>
+        <p>Quel nombre est le plus grand ?</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="comparer" data-stage="a">Étape 1<small>jusqu'à 10</small><span class="stars-mini" data-stars="comparer-a"></span></button>
+          <button class="stage-btn b" data-level="comparer" data-stage="b">Étape 2<small>jusqu'à 20</small><span class="stars-mini" data-stars="comparer-b"></span></button>
+        </div>
+      </div>
+
+      <div class="level-card level-4">
+        <div class="badge">➕</div>
+        <h3>Calculer</h3>
+        <p>Additionne et soustrais</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="calculer" data-stage="a">Étape 1<small>jusqu'à 10</small><span class="stars-mini" data-stars="calculer-a"></span></button>
+          <button class="stage-btn b" data-level="calculer" data-stage="b">Étape 2<small>jusqu'à 20</small><span class="stars-mini" data-stars="calculer-b"></span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="screen-game" class="screen">
+    <div class="game-card">
+      <div class="game-top">
+        <button class="quit-btn" id="btn-quit" title="Quitter">✕</button>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="qcount" id="qcount">1/8</div>
+      </div>
+      <div class="prompt" id="prompt">—</div>
+      <div class="visual-row" id="visual-row"></div>
+      <div class="compare-row" id="compare-row" style="display:none;"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback-line" id="feedback"></div>
+    </div>
+  </section>
+
+  <!-- RESULT SCREEN -->
+  <section id="screen-result" class="screen">
+    <div class="result-card">
+      <div class="result-stars" id="result-stars">⭐⭐⭐</div>
+      <div class="result-score" id="result-score">7 / 8 bonnes réponses</div>
+      <div class="result-msg" id="result-msg">Bravo, continue comme ça !</div>
+      <div class="result-actions">
+        <button class="btn-primary" id="btn-replay">Rejouer</button>
+        <button class="btn-secondary" id="btn-home">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS SCREEN -->
+  <section id="screen-progress" class="screen">
+    <div class="progress-header">
+      <h2 id="progress-title">Progrès de —</h2>
+      <button class="back-btn" id="btn-back-home">← Accueil</button>
+    </div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="history-list" id="history-list"></div>
+  </section>
+
+  <footer class="note">Les résultats sont enregistrés automatiquement sur cet appareil, par prénom.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- constants ----------
+  const LEVELS = {
+    compter:     {name:"Compter",      icon:"🔢"},
+    reconnaitre: {name:"Reconnaître",  icon:"🔎"},
+    comparer:    {name:"Comparer",     icon:"⚖️"},
+    calculer:    {name:"Calculer",     icon:"➕"}
+  };
+  const OBJECT_SETS = ["🍎","⭐","🐟","🦋","🍓","🐝","🎈","🍌","🐞","🧸"];
+  const QUESTIONS_PER_SESSION = 8;
+  const STORAGE_KEY_PROGRESS = "pn:progress:v1";
+  const STORAGE_KEY_LAST_NAME = "pn:lastname:v1";
+
+  // ---------- state ----------
+  let state = {
+    studentName: "",
+    level: null,
+    stage: null,
+    qIndex: 0,
+    correctCount: 0,
+    questions: [],
+    locked: false,
+    progressData: { students: {} }
+  };
+
+  // ---------- storage helpers (browser localStorage, personal / per-device) ----------
+  async function loadProgress(){
+    try{
+      const raw = window.localStorage.getItem(STORAGE_KEY_PROGRESS);
+      if(raw){
+        state.progressData = JSON.parse(raw);
+      }
+    }catch(e){
+      state.progressData = { students: {} };
+    }
+  }
+  async function saveProgress(){
+    try{
+      window.localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(state.progressData));
+    }catch(e){ /* best effort — e.g. storage disabled/full */ }
+  }
+  async function loadLastName(){
+    try{
+      const val = window.localStorage.getItem(STORAGE_KEY_LAST_NAME);
+      if(val) return val;
+    }catch(e){}
+    return "";
+  }
+  async function saveLastName(name){
+    try{ window.localStorage.setItem(STORAGE_KEY_LAST_NAME, name); }catch(e){}
+  }
+
+  function getStudentRecord(name){
+    if(!state.progressData.students[name]){
+      state.progressData.students[name] = { history: [], bestStars: {} };
+    }
+    return state.progressData.students[name];
+  }
+
+  function recordSession(name, level, stage, correct, total, stars){
+    const rec = getStudentRecord(name);
+    rec.history.unshift({
+      date: new Date().toISOString(),
+      level, stage, correct, total, stars
+    });
+    rec.history = rec.history.slice(0, 60);
+    const key = level+"-"+stage;
+    if(!rec.bestStars[key] || rec.bestStars[key] < stars){
+      rec.bestStars[key] = stars;
+    }
+  }
+
+  // ---------- utils ----------
+  function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function pick(arr){ return arr[rand(0,arr.length-1)]; }
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = rand(0,i);
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function range(stage){ return stage === "a" ? {min:1,max:10} : {min:11,max:20}; }
+
+  function distractors(correct, min, max, count){
+    const set = new Set([correct]);
+    let guard = 0;
+    while(set.size < count && guard < 200){
+      guard++;
+      const delta = rand(-4,4);
+      let v = correct + delta;
+      if(delta === 0) continue;
+      if(v < min) v = min + rand(0, 3);
+      if(v > max) v = max - rand(0, 3);
+      if(v < 0) v = 0;
+      set.add(v);
+    }
+    // fallback fill if still short (very small ranges)
+    let filler = min;
+    while(set.size < count){
+      set.add(filler);
+      filler++;
+      if(filler > max + 10) break;
+    }
+    return shuffle(Array.from(set)).slice(0,count);
+  }
+
+  // ---------- question generators ----------
+  function genCompter(stage){
+    const {min,max} = range(stage);
+    const n = rand(min,max);
+    const emoji = pick(OBJECT_SETS);
+    const opts = distractors(n, 1, max, 4);
+    return {
+      prompt: "Combien y a-t-il de "+emoji+" ?",
+      visualType: "objects",
+      visual: Array(n).fill(emoji).join(" "),
+      options: opts.map(v => ({label:String(v), value:v})),
+      correctValue: n
+    };
+  }
+
+  function genReconnaitre(stage){
+    const {min,max} = range(stage);
+    const n = rand(min,max);
+    const emoji = pick(OBJECT_SETS);
+    const digitToQty = Math.random() < 0.5;
+    if(digitToQty){
+      const opts = distractors(n, min, max, 4).map(v => ({
+        label: Array(v).fill("•").join(" "),
+        value: v,
+        isDots:true
+      }));
+      return {
+        prompt: "Touche le groupe qui a "+n+" éléments",
+        visualType: "bignum",
+        visual: String(n),
+        options: opts,
+        correctValue: n
+      };
+    } else {
+      const opts = distractors(n, min, max, 4).map(v => ({label:String(v), value:v}));
+      return {
+        prompt: "Combien vois-tu de "+emoji+" ? Touche le bon nombre",
+        visualType: "objects",
+        visual: Array(n).fill(emoji).join(" "),
+        options: opts,
+        correctValue: n
+      };
+    }
+  }
+
+  function genComparer(stage){
+    const {min,max} = range(stage);
+    let a = rand(min,max), b = rand(min,max);
+    while(b === a){ b = rand(min,max); }
+    const wantMax = Math.random() < 0.5;
+    const correct = wantMax ? Math.max(a,b) : Math.min(a,b);
+    return {
+      prompt: wantMax ? "Quel nombre est le plus grand ?" : "Quel nombre est le plus petit ?",
+      visualType: "compare",
+      visual: [a,b],
+      options: shuffle([a,b]).map(v => ({label:String(v), value:v})),
+      correctValue: correct
+    };
+  }
+
+  function genCalculer(stage){
+    const {max} = range(stage);
+    const isAdd = Math.random() < 0.6;
+    let a,b,result,text;
+    if(isAdd){
+      a = rand(1, max-1);
+      b = rand(1, max - a);
+      result = a+b;
+      text = a+" + "+b+" = ?";
+    } else {
+      a = rand(2, max);
+      b = rand(1, a);
+      result = a-b;
+      text = a+" − "+b+" = ?";
+    }
+    const opts = distractors(result, 0, max, 4).map(v => ({label:String(v), value:v}));
+    return {
+      prompt: text,
+      visualType: "none",
+      visual: null,
+      options: opts,
+      correctValue: result
+    };
+  }
+
+  function generateQuestion(level, stage){
+    switch(level){
+      case "compter": return genCompter(stage);
+      case "reconnaitre": return genReconnaitre(stage);
+      case "comparer": return genComparer(stage);
+      case "calculer": return genCalculer(stage);
+    }
+  }
+
+  // ---------- screens ----------
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
+
+  function refreshStarsMini(){
+    const name = state.studentName;
+    const rec = name ? state.progressData.students[name] : null;
+    document.querySelectorAll("[data-stars]").forEach(el => {
+      const key = el.getAttribute("data-stars");
+      const best = rec && rec.bestStars ? rec.bestStars[key] : 0;
+      el.textContent = best ? "★".repeat(best) : "";
+    });
+  }
+
+  // ---------- game flow ----------
+  function startSession(level, stage){
+    if(!state.studentName){
+      const input = document.getElementById("student-name");
+      input.focus();
+      input.style.borderColor = "var(--coral)";
+      setTimeout(()=>{ input.style.borderColor = ""; }, 900);
+      return;
+    }
+    state.level = level;
+    state.stage = stage;
+    state.qIndex = 0;
+    state.correctCount = 0;
+    state.questions = [];
+    for(let i=0;i<QUESTIONS_PER_SESSION;i++){
+      state.questions.push(generateQuestion(level, stage));
+    }
+    showScreen("screen-game");
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    state.locked = false;
+    const q = state.questions[state.qIndex];
+    document.getElementById("qcount").textContent = (state.qIndex+1)+"/"+QUESTIONS_PER_SESSION;
+    document.getElementById("progress-fill").style.width = ((state.qIndex)/QUESTIONS_PER_SESSION*100)+"%";
+    document.getElementById("prompt").textContent = q.prompt;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("feedback").className = "feedback-line";
+
+    const visualRow = document.getElementById("visual-row");
+    const compareRow = document.getElementById("compare-row");
+    visualRow.style.display = "none";
+    compareRow.style.display = "none";
+    visualRow.className = "visual-row";
+    visualRow.innerHTML = "";
+    compareRow.innerHTML = "";
+
+    if(q.visualType === "objects"){
+      visualRow.style.display = "flex";
+      visualRow.textContent = q.visual;
+    } else if(q.visualType === "bignum"){
+      visualRow.style.display = "flex";
+      visualRow.classList.add("big-number");
+      visualRow.textContent = q.visual;
+    } else if(q.visualType === "compare"){
+      compareRow.style.display = "flex";
+      q.visual.forEach((v,i) => {
+        const d = document.createElement("div");
+        d.className = "compare-num";
+        d.textContent = v;
+        compareRow.appendChild(d);
+        if(i===0){
+          const vs = document.createElement("div");
+          vs.className = "vs";
+          vs.textContent = "VS";
+          compareRow.appendChild(vs);
+        }
+      });
+    }
+
+    const optionsEl = document.getElementById("options");
+    optionsEl.innerHTML = "";
+    q.options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "opt-btn";
+      if(opt.isDots){
+        const span = document.createElement("span");
+        span.className = "dots";
+        span.textContent = opt.label;
+        btn.appendChild(span);
+      } else {
+        btn.textContent = opt.label;
+      }
+      btn.addEventListener("click", () => handleAnswer(opt.value, btn));
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(value, btnEl){
+    if(state.locked) return;
+    state.locked = true;
+    const q = state.questions[state.qIndex];
+    const correct = value === q.correctValue;
+    const feedback = document.getElementById("feedback");
+    document.querySelectorAll(".opt-btn").forEach(b => b.disabled = true);
+
+    if(correct){
+      state.correctCount++;
+      btnEl.classList.add("correct");
+      feedback.textContent = pick(["Bravo !","Super !","Exact !","Bien joué !"]);
+      feedback.classList.add("ok");
+    } else {
+      btnEl.classList.add("wrong");
+      feedback.textContent = "Pas tout à fait — la réponse était "+q.correctValue;
+      feedback.classList.add("no");
+      document.querySelectorAll(".opt-btn").forEach(b => {
+        if(String(q.correctValue) === b.textContent || (b.querySelector(".dots") && q.options.find(o=>o.isDots && o.value===q.correctValue))){
+          // mark correct one visually too, matched by value via options array
+        }
+      });
+      // find and highlight the actually-correct button by re-scanning options order
+      const optionButtons = document.querySelectorAll(".opt-btn");
+      q.options.forEach((opt,idx) => {
+        if(opt.value === q.correctValue){
+          optionButtons[idx].classList.add("correct");
+        }
+      });
+    }
+
+    setTimeout(() => {
+      state.qIndex++;
+      if(state.qIndex < QUESTIONS_PER_SESSION){
+        renderQuestion();
+      } else {
+        finishSession();
+      }
+    }, 900);
+  }
+
+  function starsForScore(correct, total){
+    const pct = correct/total;
+    if(pct >= 0.9) return 3;
+    if(pct >= 0.6) return 2;
+    if(pct >= 0.3) return 1;
+    return 0;
+  }
+
+  async function finishSession(){
+    document.getElementById("progress-fill").style.width = "100%";
+    const stars = starsForScore(state.correctCount, QUESTIONS_PER_SESSION);
+    recordSession(state.studentName, state.level, state.stage, state.correctCount, QUESTIONS_PER_SESSION, stars);
+    await saveProgress();
+    refreshStarsMini();
+
+    document.getElementById("result-stars").textContent = stars > 0 ? "⭐".repeat(stars)+"☆".repeat(3-stars) : "☆☆☆";
+    document.getElementById("result-score").textContent = state.correctCount+" / "+QUESTIONS_PER_SESSION+" bonnes réponses";
+    const msgs = {
+      3:["Excellent travail, c'est parfait ou presque !","Tu maîtrises très bien !"],
+      2:["Bien joué, continue à t'entraîner !","Bon travail !"],
+      1:["C'est un bon début, réessaie pour progresser !","Encore un effort !"],
+      0:["Ce n'est pas grave, on réessaie ?","Entraîne-toi encore un peu !"]
+    };
+    document.getElementById("result-msg").textContent = pick(msgs[stars]);
+    showScreen("screen-result");
+  }
+
+  // ---------- progress screen ----------
+  function renderProgressScreen(){
+    const name = state.studentName || "—";
+    document.getElementById("progress-title").textContent = "Progrès de "+name;
+    const rec = state.studentName ? state.progressData.students[state.studentName] : null;
+
+    const statsGrid = document.getElementById("stats-grid");
+    const historyList = document.getElementById("history-list");
+    statsGrid.innerHTML = "";
+    historyList.innerHTML = "";
+
+    if(!rec || rec.history.length === 0){
+      statsGrid.innerHTML = "";
+      historyList.innerHTML = '<div class="empty-note">Aucune partie enregistrée pour l\'instant.<br>Choisis un niveau depuis l\'accueil pour commencer !</div>';
+      return;
+    }
+
+    const totalGames = rec.history.length;
+    const totalStars = Object.values(rec.bestStars).reduce((a,b)=>a+b,0);
+    const bestSession = rec.history.reduce((a,b)=> (b.correct/b.total) > (a.correct/a.total) ? b : a, rec.history[0]);
+
+    const stats = [
+      {num: totalGames, lbl:"Parties jouées"},
+      {num: totalStars, lbl:"Étoiles au total"},
+      {num: bestSession.correct+"/"+bestSession.total, lbl:"Meilleur score"}
+    ];
+    stats.forEach(s => {
+      const box = document.createElement("div");
+      box.className = "stat-box";
+      box.innerHTML = '<div class="num">'+s.num+'</div><div class="lbl">'+s.lbl+'</div>';
+      statsGrid.appendChild(box);
+    });
+
+    rec.history.forEach(h => {
+      const row = document.createElement("div");
+      row.className = "history-row";
+      const d = new Date(h.date);
+      const dateStr = d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) + " " + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+      const levelName = LEVELS[h.level] ? LEVELS[h.level].icon+" "+LEVELS[h.level].name : h.level;
+      const stageLabel = h.stage === "a" ? "≤10" : "≤20";
+      row.innerHTML =
+        '<span>'+levelName+' <span class="stage-tag">'+stageLabel+'</span></span>' +
+        '<span>'+h.correct+'/'+h.total+'</span>' +
+        '<span class="stars">'+"★".repeat(h.stars)+"☆".repeat(3-h.stars)+'</span>' +
+        '<span>'+dateStr+'</span>';
+      historyList.appendChild(row);
+    });
+  }
+
+  // ---------- event wiring ----------
+  function wireEvents(){
+    const nameInput = document.getElementById("student-name");
+    nameInput.addEventListener("change", async () => {
+      state.studentName = nameInput.value.trim();
+      await saveLastName(state.studentName);
+      refreshStarsMini();
+    });
+    nameInput.addEventListener("blur", async () => {
+      state.studentName = nameInput.value.trim();
+      await saveLastName(state.studentName);
+      refreshStarsMini();
+    });
+
+    document.querySelectorAll(".stage-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.studentName = nameInput.value.trim();
+        const level = btn.getAttribute("data-level");
+        const stage = btn.getAttribute("data-stage");
+        startSession(level, stage);
+      });
+    });
+
+    document.getElementById("btn-quit").addEventListener("click", () => {
+      showScreen("screen-home");
+    });
+
+    document.getElementById("btn-replay").addEventListener("click", () => {
+      startSession(state.level, state.stage);
+    });
+    document.getElementById("btn-home").addEventListener("click", () => {
+      showScreen("screen-home");
+    });
+
+    document.getElementById("btn-progress").addEventListener("click", () => {
+      state.studentName = nameInput.value.trim();
+      if(!state.studentName){
+        nameInput.focus();
+        nameInput.style.borderColor = "var(--coral)";
+        setTimeout(()=>{ nameInput.style.borderColor = ""; }, 900);
+        return;
+      }
+      renderProgressScreen();
+      showScreen("screen-progress");
+    });
+    document.getElementById("btn-back-home").addEventListener("click", () => {
+      showScreen("screen-home");
+    });
+  }
+
+  // ---------- init ----------
+  async function init(){
+    wireEvents();
+    await loadProgress();
+    const lastName = await loadLastName();
+    if(lastName){
+      document.getElementById("student-name").value = lastName;
+      state.studentName = lastName;
+    }
+    refreshStarsMini();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
