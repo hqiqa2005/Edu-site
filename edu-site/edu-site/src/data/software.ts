@@ -1,0 +1,11 @@
+export type Software = { slug:string; title:string; level:string; subject:string; icon:string; color:string; description:string; goals:string[]; age:string; duration:string; mode:string; featured?:boolean };
+export const levels = ['CP','CE1','CE2','CM1','CM2'];
+export const subjects = ['Mathématiques','Français','Sciences','Logique'];
+export const softwares: Software[] = [
+ {slug:'maths-aventure',title:'Maths Aventure',level:'CP',subject:'Mathématiques',icon:'🔢',color:'blue',age:'6–7 ans',duration:'10 min',mode:'En ligne',featured:true,description:'Une aventure joyeuse pour compter, comparer et commencer à calculer.',goals:['Compter jusqu’à 100','Comparer des quantités','Développer le calcul mental']},
+ {slug:'mots-magiques',title:'Mots Magiques',level:'CE1',subject:'Français',icon:'📚',color:'yellow',age:'7–8 ans',duration:'10–15 min',mode:'En ligne',featured:true,description:'Des défis de lecture et de vocabulaire pour progresser à son rythme.',goals:['Lire des phrases simples','Reconnaître les sons','Enrichir le vocabulaire']},
+ {slug:'petit-scientifique',title:'Petit Scientifique',level:'CE2',subject:'Sciences',icon:'🔬',color:'green',age:'8–9 ans',duration:'15 min',mode:'En ligne',featured:true,description:'Observe, questionne et expérimente pour comprendre le monde.',goals:['Observer et classer','Formuler des hypothèses','Comprendre des phénomènes simples']},
+ {slug:'detective-logique',title:'Détective Logique',level:'CM1',subject:'Logique',icon:'🧩',color:'purple',age:'9–10 ans',duration:'10–15 min',mode:'En ligne',description:'Des énigmes progressives pour exercer raisonnement, attention et stratégie.',goals:['Repérer des suites logiques','Résoudre des problèmes','Développer le raisonnement']},
+ {slug:'calcul-champion',title:'Calcul Champion',level:'CM2',subject:'Mathématiques',icon:'🏆',color:'blue',age:'10–11 ans',duration:'10 min',mode:'En ligne',description:'Des challenges de calcul mental pour gagner en rapidité et en confiance.',goals:['Calculer rapidement','Choisir une stratégie','Progresser à son rythme']},
+ {slug:'atelier-histoires',title:'Atelier Histoires',level:'CM2',subject:'Français',icon:'✍️',color:'yellow',age:'10–11 ans',duration:'15 min',mode:'En ligne',description:'Imagine, organise et enrichis tes propres histoires.',goals:['Comprendre un récit','Organiser ses idées','Écrire des phrases']},
+];
