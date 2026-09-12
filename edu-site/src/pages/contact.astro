@@ -1,0 +1,4 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Contact — Petits Explorateurs"><section class="page-head"><span class="eyebrow">💬 Contact</span><h1>Une question ou une idée ?</h1><p>Écris-nous un message. Le formulaire est actuellement une maquette.</p></section><section class="parent-box"><label for="name">Nom</label><input id="name"/><label for="email">E-mail</label><input id="email" type="email"/><label for="msg">Message</label><textarea id="msg" rows="6"></textarea><button class="cta" type="button" onclick="document.querySelector('#contact-message').textContent='Merci ! Dans la version production, ce formulaire sera relié à un service de messagerie.'">Envoyer</button><p id="contact-message" class="message" role="status"></p></section></Layout>
