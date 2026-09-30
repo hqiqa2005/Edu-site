@@ -1,1 +1,1 @@
-{"name":"petits-explorateurs","version":"1.0.0","type":"module","scripts":{"dev":"astro dev","build":"astro build","preview":"astro preview"},"dependencies":{"@astrojs/check":"latest","astro":"latest","typescript":"latest"},"devDependencies":{}}
+{"name":"petits-explorateurs","version":"1.0.0","type":"module","scripts":{"dev":"astro dev","build":"astro build","preview":"astro preview"},"dependencies":{"@astrojs/check":"0.9.4","astro":"5.16.3","typescript":"latest"},"devDependencies":{}}
