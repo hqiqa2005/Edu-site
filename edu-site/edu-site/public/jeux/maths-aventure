@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths Aventure — 6–7 ans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#EAF5FB;--sky-deep:#D5ECF7;--sand:#FFF3D9;--sun:#FFB238;--sun-deep:#F08A1E;--coral:#FF7A68;--coral-deep:#E75F4E;--berry:#7C6FE0;--berry-deep:#5F50CC;--ink:#233246;--ink-soft:#5B6B80;--paper:#fff;--ok:#3FAE73;--ok-deep:#2E8F5C;--shadow:0 10px 0 rgba(35,50,70,.10);--fd:'Baloo 2',system-ui,sans-serif;--fb:'Nunito',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:var(--fb);color:var(--ink);background:radial-gradient(ellipse 120% 60% at 50% -10%,var(--sky-deep) 0%,var(--sky) 45%,var(--sky) 100%);min-height:100vh;overflow-x:hidden}
+.scenery{position:fixed;left:0;right:0;bottom:0;height:38vh;z-index:0;pointer-events:none}
+.scenery svg{width:100%;height:100%;display:block}
+#app{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:22px 18px 60px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--berry);outline-offset:2px}
+header.top{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:6px}
+.mascot{width:64px;height:64px;border-radius:50%;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:38px;box-shadow:0 5px 0 rgba(35,50,70,.10)}
+h1.title{font-family:var(--fd);font-weight:800;font-size:clamp(28px,6vw,42px);margin:0;color:var(--berry-deep);text-shadow:2px 3px 0 rgba(255,255,255,.6)}
+.subtitle{text-align:center;color:var(--ink-soft);font-weight:700;margin:0 0 10px;font-size:15px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.chips span{background:var(--paper);border-radius:14px;padding:5px 12px;font-size:13px;font-weight:800;color:var(--ink-soft)}
+.screen{display:none}
+.screen.active{display:block;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen.active{animation:none}.progress-fill{transition:none}}
+.profile-bar{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;background:var(--paper);border-radius:22px;padding:10px 16px;box-shadow:var(--shadow);margin:0 auto 22px;max-width:480px}
+.profile-bar label{font-weight:700;color:var(--ink-soft);font-size:14px}
+.profile-bar input{font-family:var(--fb);font-weight:700;font-size:15px;color:var(--ink);border:2px solid var(--sky-deep);border-radius:14px;padding:7px 12px;width:150px;background:var(--sky)}
+.icon-btn{border:none;background:var(--sand);border-radius:14px;padding:8px 12px;cursor:pointer;font-weight:700;font-family:var(--fb);color:var(--ink);font-size:14px;box-shadow:0 4px 0 rgba(35,50,70,.12)}
+.icon-btn:active{transform:translateY(3px);box-shadow:none}
+.goals{background:var(--paper);border-radius:22px;padding:14px 20px;max-width:480px;margin:0 auto 22px;box-shadow:var(--shadow)}
+.goals h2{font-family:var(--fd);font-size:17px;margin:0 0 6px;color:var(--ink)}
+.goals ul{list-style:none;margin:0;padding:0;font-weight:700;font-size:14px;color:var(--ink-soft)}
+.goals li{padding:2px 0}
+.goals li b{color:var(--ok-deep);margin-right:8px}
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:26px}
+.level-card{background:var(--paper);border-radius:34px 34px 30px 30px/40px 40px 26px 26px;padding:20px 18px 18px;box-shadow:var(--shadow);text-align:center}
+.badge{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 10px}
+.level-card h3{font-family:var(--fd);font-size:20px;margin:0 0 4px}
+.level-card p{font-size:13px;color:var(--ink-soft);margin:0 0 14px;font-weight:600}
+.stage-row{display:flex;gap:8px}
+.stage-btn{flex:1;border:none;cursor:pointer;font-family:var(--fb);font-weight:800;color:#fff;border-radius:16px;padding:10px 6px;font-size:13.5px;box-shadow:0 4px 0 rgba(0,0,0,.15);display:flex;flex-direction:column;gap:2px;align-items:center}
+.stage-btn small{font-weight:700;opacity:.95;font-size:10.5px}
+.stage-btn:active{transform:translateY(3px);box-shadow:none}
+.stars-mini{font-size:11px;letter-spacing:1px;min-height:14px}
+.l-compter .badge{background:#FFE2C2}.l-comparer .badge{background:#E7E2FB}.l-calculer .badge{background:#DCF3E4}
+.stage-btn.a{background:linear-gradient(180deg,var(--sun),var(--sun-deep))}
+.stage-btn.b{background:linear-gradient(180deg,var(--coral),var(--coral-deep))}
+.game-card{background:var(--paper);border-radius:36px 36px 30px 30px/44px 44px 26px 26px;padding:26px 22px;box-shadow:var(--shadow);max-width:560px;margin:0 auto}
+.game-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.qcount{font-weight:800;color:var(--ink-soft);font-size:14px}
+.progress-track{height:10px;background:var(--sky-deep);border-radius:8px;flex:1;margin:0 14px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--sun),var(--coral));width:0;transition:width .35s ease}
+.quit-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft)}
+.prompt{font-family:var(--fd);font-size:clamp(19px,4.6vw,24px);font-weight:700;text-align:center;margin:6px 0 18px}
+.visual-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;min-height:56px;margin-bottom:18px;font-size:32px}
+.visual-row.big-number{font-family:var(--fd);font-size:76px;font-weight:800;color:var(--berry-deep);min-height:90px}
+.visual-row.seq{font-family:var(--fd);font-weight:800;font-size:clamp(26px,7vw,36px);color:var(--berry-deep);text-align:center}
+.compare-row{display:flex;gap:16px;justify-content:center;align-items:center;margin-bottom:18px}
+.compare-num{font-family:var(--fd);font-size:44px;font-weight:800;background:var(--sky);border-radius:20px;padding:10px 22px}
+.compare-num.grp{font-size:22px;font-weight:600;line-height:1.35;padding:12px;flex:1;text-align:center;font-family:var(--fb)}
+.vs{font-weight:800;color:var(--ink-soft);font-size:15px}
+.options{display:grid;gap:12px}
+.opt-btn{border:none;cursor:pointer;background:var(--sky);border-radius:20px;padding:16px 10px;font-family:var(--fd);font-weight:700;font-size:26px;color:var(--ink);box-shadow:0 5px 0 var(--sky-deep)}
+.opt-btn.sm{font-size:19px}
+.opt-btn:active{transform:translateY(4px);box-shadow:none}
+.opt-btn.correct{background:var(--ok);color:#fff;box-shadow:0 5px 0 var(--ok-deep)}
+.opt-btn.wrong{background:var(--coral);color:#fff;box-shadow:0 5px 0 var(--coral-deep)}
+.opt-btn:disabled{cursor:default}
+.feedback-line{text-align:center;font-weight:800;min-height:26px;margin-top:14px;font-size:16px}
+.feedback-line.ok{color:var(--ok-deep)}.feedback-line.no{color:var(--coral-deep)}
+.result-card{background:var(--paper);border-radius:36px;padding:34px 24px;text-align:center;max-width:480px;margin:0 auto;box-shadow:var(--shadow)}
+.result-stars{font-size:52px;letter-spacing:8px;margin:10px 0 6px}
+.result-score{font-family:var(--fd);font-size:22px;font-weight:800;margin-bottom:4px}
+.result-msg{color:var(--ink-soft);font-weight:700;margin-bottom:22px}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary,.btn-secondary{border:none;cursor:pointer;font-family:var(--fb);font-weight:800;font-size:14.5px;padding:12px 20px;border-radius:16px}
+.btn-primary{background:var(--berry);color:#fff;box-shadow:0 5px 0 var(--berry-deep)}
+.btn-secondary{background:var(--sky);color:var(--ink);box-shadow:0 5px 0 var(--sky-deep)}
+.btn-primary:active,.btn-secondary:active{transform:translateY(4px);box-shadow:none}
+.progress-header{display:flex;align-items:center;justify-content:space-between;max-width:640px;margin:0 auto 16px}
+.progress-header h2{font-family:var(--fd);margin:0;font-size:24px;color:var(--berry-deep)}
+.back-btn{background:var(--sky);border:none;border-radius:14px;padding:9px 16px;font-weight:800;cursor:pointer;color:var(--ink)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;max-width:640px;margin:0 auto 22px}
+.stat-box{background:var(--paper);border-radius:22px;padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat-box .num{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--berry-deep)}
+.stat-box .lbl{font-size:12.5px;color:var(--ink-soft);font-weight:700}
+.history-list{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.history-row{background:var(--paper);border-radius:16px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 4px 0 rgba(35,50,70,.06);font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.history-row .stars{color:var(--sun-deep)}
+.empty-note{text-align:center;color:var(--ink-soft);font-weight:700;padding:30px 10px}
+footer.note{text-align:center;color:var(--ink-soft);font-size:11.5px;margin-top:34px;font-weight:600}
+@media (max-width:420px){.compare-num{font-size:36px;padding:8px 14px}.visual-row.big-number{font-size:60px}}
+</style>
+</head>
+<body>
+<div class="scenery"><svg viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0,180 C200,120 380,220 620,160 C860,100 1000,190 1200,150 L1200,300 L0,300 Z" fill="#CDEAB6"/><path d="M0,220 C220,190 420,260 650,210 C880,160 1050,240 1200,210 L1200,300 L0,300 Z" fill="#9FD489" opacity=".85"/></svg></div>
+<div id="app">
+  <header class="top"><div class="mascot" aria-hidden="true">🦊</div><h1 class="title">Maths Aventure</h1></header>
+  <p class="subtitle">Une aventure joyeuse pour compter, comparer et commencer à calculer.</p>
+  <div class="chips"><span>👦 6–7 ans</span><span>⏱ 10 min</span><span>💻 En ligne</span></div>
+
+  <section id="screen-home" class="screen active">
+    <div class="profile-bar">
+      <label for="student-name">Qui joue ?</label>
+      <input id="student-name" type="text" maxlength="18" placeholder="Prénom">
+      <button class="icon-btn" id="btn-progress">⭐ Mes progrès</button>
+    </div>
+    <div class="goals">
+      <h2>🎯 Objectifs pédagogiques</h2>
+      <ul><li><b>✓</b>Compter jusqu’à 100</li><li><b>★</b>Comparer des quantités</li><li><b>➜</b>Développer le calcul mental</li></ul>
+    </div>
+    <div class="levels">
+      <div class="level-card l-compter"><div class="badge">🔢</div><h3>Compter jusqu’à 100</h3><p>Suites, dizaines et unités</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="compter" data-stage="a">Étape 1<small>jusqu’à 50</small><span class="stars-mini" data-stars="compter-a"></span></button>
+          <button class="stage-btn b" data-level="compter" data-stage="b">Étape 2<small>jusqu’à 100</small><span class="stars-mini" data-stars="compter-b"></span></button>
+        </div></div>
+      <div class="level-card l-comparer"><div class="badge">⚖️</div><h3>Comparer</h3><p>Plus grand, plus petit, égal</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="comparer" data-stage="a">Étape 1<small>plus / moins</small><span class="stars-mini" data-stars="comparer-a"></span></button>
+          <button class="stage-btn b" data-level="comparer" data-stage="b">Étape 2<small>&lt; = &gt;</small><span class="stars-mini" data-stars="comparer-b"></span></button>
+        </div></div>
+      <div class="level-card l-calculer"><div class="badge">🧠</div><h3>Calcul mental</h3><p>Calcule dans ta tête</p>
+        <div class="stage-row">
+          <button class="stage-btn a" data-level="calculer" data-stage="a">Étape 1<small>jusqu’à 20</small><span class="stars-mini" data-stars="calculer-a"></span></button>
+          <button class="stage-btn b" data-level="calculer" data-stage="b">Étape 2<small>astuces</small><span class="stars-mini" data-stars="calculer-b"></span></button>
+        </div></div>
+    </div>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <div class="game-card">
+      <div class="game-top">
+        <button class="quit-btn" id="btn-quit" title="Quitter" aria-label="Quitter">✕</button>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="qcount" id="qcount">1/10</div>
+      </div>
+      <div class="prompt" id="prompt">—</div>
+      <div class="visual-row" id="visual-row"></div>
+      <div class="compare-row" id="compare-row" style="display:none"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback-line" id="feedback" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <div class="result-card">
+      <div class="result-stars" id="result-stars"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <div class="result-actions">
+        <button class="btn-primary" id="btn-replay">Rejouer</button>
+        <button class="btn-secondary" id="btn-home">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-progress" class="screen">
+    <div class="progress-header"><h2 id="progress-title">Progrès</h2><button class="back-btn" id="btn-back-home">← Accueil</button></div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="history-list" id="history-list"></div>
+  </section>
+
+  <footer class="note">Les résultats sont enregistrés automatiquement sur cet appareil, par prénom.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const LEVELS={compter:{name:"Compter",icon:"🔢"},comparer:{name:"Comparer",icon:"⚖️"},calculer:{name:"Calcul mental",icon:"🧠"}};
+const OBJ=["🍎","⭐","🐟","🦋","🍓","🐝","🎈","🍌","🐞","🧸"];
+const N=10, KP="ma:progress:v1", KN="ma:lastname:v1";
+const $=id=>document.getElementById(id);
+const state={name:"",level:null,stage:null,i:0,ok:0,qs:[],locked:false,data:{students:{}}};
+
+/* ---- stockage local (par appareil) ---- */
+function load(){try{const r=localStorage.getItem(KP);if(r)state.data=JSON.parse(r)}catch(e){state.data={students:{}}}}
+function save(){try{localStorage.setItem(KP,JSON.stringify(state.data))}catch(e){}}
+function record(level,stage,correct,stars){
+  const s=state.data.students, r=s[state.name]||(s[state.name]={history:[],bestStars:{}});
+  r.history.unshift({level,stage,correct,total:N,stars,date:new Date().toISOString()});
+  r.history=r.history.slice(0,30);
+  const k=level+"-"+stage; if(!r.bestStars[k]||r.bestStars[k]<stars)r.bestStars[k]=stars;
+}
+
+/* ---- outils ---- */
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rand(0,a.length-1)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+const opts=a=>a.map(v=>({label:String(v),value:v}));
+const rep=(e,n)=>Array(n).fill(e).join(" ");
+function near(c,min,max,n){const s=new Set([c]);let g=0;while(s.size<n&&g++<300){const v=c+rand(-5,5);if(v>=min&&v<=max)s.add(v)}for(let v=min;s.size<n&&v<=max;v++)s.add(v);return shuffle([...s]).slice(0,n)}
+
+/* ---- générateurs de questions ---- */
+function gCompterA(){
+  const s=rand(1,46),k=rand(0,3),seq=[0,1,2,3].map(j=>s+j),c=seq[k];
+  return {prompt:"Quel nombre manque dans la suite ?",visual:seq.map((v,j)=>j===k?"__":v).join(" , "),seq:true,options:opts(near(c,1,50,4)),correct:c};
+}
+function gCompterB(){
+  const t=rand(0,3);
+  if(t===0){
+    const d=rand(2,9),u=rand(0,9),n=d*10+u;
+    const bad=shuffle([...new Set([u*10+d,n+10,n-10,n+1,n-1])].filter(v=>v!==n&&v>=10&&v<=99)).slice(0,3);
+    return {prompt:"Quel est ce nombre ?",visual:d+" dizaine"+(d>1?"s":"")+" et "+u+" unité"+(u>1?"s":""),seq:true,options:opts(shuffle([n,...bad])),correct:n};
+  }
+  if(t===1){
+    const s=rand(1,7)*10,k=rand(0,3),seq=[0,1,2,3].map(j=>s+j*10),c=seq[k];
+    const all=[10,20,30,40,50,60,70,80,90,100].filter(v=>v!==c);
+    return {prompt:"Compte de 10 en 10. Quel nombre manque ?",visual:seq.map((v,j)=>j===k?"__":v).join(" , "),seq:true,options:opts(shuffle([c,...shuffle(all).slice(0,3)])),correct:c};
+  }
+  if(t===2){const n=rand(40,99);return {prompt:"Quel nombre vient juste après",visual:String(n),big:true,options:opts(near(n+1,41,100,4)),correct:n+1};}
+  const n=rand(42,100);
+  return {prompt:"Quel nombre vient juste avant",visual:String(n),big:true,options:opts(near(n-1,41,99,4)),correct:n-1};
+}
+function twoNums(){
+  const a=rand(10,99);let b=Math.random()<.5?Math.floor(a/10)*10+rand(0,9):rand(10,99);
+  return [a,b];
+}
+function gComparerA(){
+  const big=Math.random()<.5;
+  if(Math.random()<.4){
+    const e=pick(OBJ);let a=rand(4,18),b=rand(4,18);while(Math.abs(a-b)<2)b=rand(4,18);
+    const left=big?a>b:a<b;
+    return {prompt:"Où y a-t-il le "+(big?"plus":"moins")+" de "+e+" ?",cmp:[rep(e,a),"VS",rep(e,b)],grp:true,
+      options:[{label:"À gauche",value:"l"},{label:"À droite",value:"r"}],correct:left?"l":"r"};
+  }
+  let [a,b]=twoNums();while(b===a)[a,b]=twoNums();
+  return {prompt:big?"Quel nombre est le plus grand ?":"Quel nombre est le plus petit ?",cmp:[a,"VS",b],options:opts(shuffle([a,b])),correct:big?Math.max(a,b):Math.min(a,b)};
+}
+function gComparerB(){
+  let [a,b]=twoNums();if(Math.random()<.2)b=a;
+  const sg=a<b?"<":a>b?">":"=";
+  return {prompt:"Choisis le bon signe",cmp:[a,"?",b],options:opts(["<","=",">"]),correct:sg};
+}
+function gCalculerA(){
+  let a,b,r,t;
+  if(Math.random()<.6){a=rand(1,19);b=rand(1,20-a);r=a+b;t=a+" + "+b+" = ?"}
+  else{a=rand(2,20);b=rand(1,a);r=a-b;t=a+" − "+b+" = ?"}
+  return {prompt:t,options:opts(near(r,0,20,4)),correct:r};
+}
+function gCalculerB(){
+  const t=rand(0,3);let p,c,lo=0,hi=20;
+  if(t===0){const a=rand(1,9);p=a+" + ? = 10";c=10-a;hi=10}
+  else if(t===1){const a=rand(2,10);p="Le double de "+a;c=2*a;lo=2}
+  else if(t===2){const a=rand(11,89),pl=Math.random()<.5;p=pl?a+" + 10 = ?":a+" − 10 = ?";c=pl?a+10:a-10;lo=1;hi=100}
+  else{const a=rand(11,19);p=a+" + ? = 20";c=20-a;hi=10}
+  return {prompt:p,options:opts(near(c,lo,hi,4)),correct:c};
+}
+const GEN={compter:{a:gCompterA,b:gCompterB},comparer:{a:gComparerA,b:gComparerB},calculer:{a:gCalculerA,b:gCalculerB}};
+
+/* ---- écrans ---- */
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
+function refreshStars(){
+  const rec=state.name?state.data.students[state.name]:null;
+  document.querySelectorAll("[data-stars]").forEach(el=>{
+    const b=rec&&rec.bestStars?rec.bestStars[el.getAttribute("data-stars")]:0;
+    el.textContent=b?"★".repeat(b):"";
+  });
+}
+function needName(){
+  const i=$("student-name");i.focus();i.style.borderColor="var(--coral)";
+  setTimeout(()=>{i.style.borderColor=""},900);
+}
+
+/* ---- partie ---- */
+function start(level,stage){
+  if(!state.name){needName();return}
+  Object.assign(state,{level,stage,i:0,ok:0,qs:[]});
+  for(let k=0;k<N;k++)state.qs.push(GEN[level][stage]());
+  show("screen-game");render();
+}
+function render(){
+  state.locked=false;
+  const q=state.qs[state.i];
+  $("qcount").textContent=(state.i+1)+"/"+N;
+  $("progress-fill").style.width=(state.i/N*100)+"%";
+  $("prompt").textContent=q.prompt;
+  const fb=$("feedback");fb.textContent="";fb.className="feedback-line";
+  const vr=$("visual-row"),cr=$("compare-row");
+  vr.innerHTML="";cr.innerHTML="";cr.style.display="none";
+  if(q.visual){vr.style.display="flex";vr.className="visual-row"+(q.big?" big-number":"")+(q.seq?" seq":"");vr.textContent=q.visual}
+  else vr.style.display="none";
+  if(q.cmp){
+    cr.style.display="flex";
+    q.cmp.forEach((v,j)=>{
+      const d=document.createElement("div");
+      d.className=j===1?"vs":"compare-num"+(q.grp?" grp":"");
+      d.textContent=v;cr.appendChild(d);
+    });
+  }
+  const o=$("options");o.innerHTML="";
+  o.style.gridTemplateColumns="repeat("+(q.options.length===3?3:2)+",1fr)";
+  q.options.forEach(op=>{
+    const b=document.createElement("button");
+    b.className="opt-btn"+(op.label.length>3?" sm":"");
+    b.textContent=op.label;
+    b.addEventListener("click",()=>answer(op.value,b));
+    o.appendChild(b);
+  });
+}
+function answer(v,btn){
+  if(state.locked)return;state.locked=true;
+  const q=state.qs[state.i],good=v===q.correct,fb=$("feedback");
+  const bs=document.querySelectorAll(".opt-btn");bs.forEach(b=>b.disabled=true);
+  if(good){
+    state.ok++;btn.classList.add("correct");
+    fb.textContent=pick(["Bravo !","Super !","Exact !","Bien joué !"]);fb.classList.add("ok");
+  }else{
+    btn.classList.add("wrong");
+    q.options.forEach((op,k)=>{if(op.value===q.correct){bs[k].classList.add("correct");fb.textContent="Pas tout à fait — la réponse était "+op.label}});
+    fb.classList.add("no");
+  }
+  setTimeout(()=>{state.i++;state.i<N?render():finish()},good?800:1500);
+}
+function starsFor(c,t){const p=c/t;return p>=.9?3:p>=.6?2:p>=.3?1:0}
+function finish(){
+  $("progress-fill").style.width="100%";
+  const st=starsFor(state.ok,N);
+  record(state.level,state.stage,state.ok,st);save();refreshStars();
+  $("result-stars").textContent="⭐".repeat(st)+"☆".repeat(3-st);
+  $("result-score").textContent=state.ok+" / "+N+" bonnes réponses";
+  const m={3:["Excellent travail, c'est parfait ou presque !","Tu maîtrises très bien !"],2:["Bien joué, continue à t'entraîner !","Bon travail !"],1:["C'est un bon début, réessaie pour progresser !","Encore un effort !"],0:["Ce n'est pas grave, on réessaie ?","Entraîne-toi encore un peu !"]};
+  $("result-msg").textContent=pick(m[st]);
+  show("screen-result");
+}
+
+/* ---- progrès ---- */
+function renderProgress(){
+  $("progress-title").textContent="Progrès de "+state.name;
+  const rec=state.data.students[state.name],sg=$("stats-grid"),hl=$("history-list");
+  sg.innerHTML="";hl.innerHTML="";
+  if(!rec||!rec.history.length){hl.innerHTML='<div class="empty-note">Aucune partie enregistrée pour l\'instant.<br>Choisis un niveau depuis l\'accueil pour commencer !</div>';return}
+  const total=Object.values(rec.bestStars).reduce((a,b)=>a+b,0);
+  const best=rec.history.reduce((a,b)=>b.correct>a.correct?b:a,rec.history[0]);
+  [[rec.history.length,"Parties jouées"],[total,"Étoiles au total"],[best.correct+"/"+best.total,"Meilleur score"]].forEach(([n,l])=>{
+    const d=document.createElement("div");d.className="stat-box";
+    d.innerHTML='<div class="num">'+n+'</div><div class="lbl">'+l+'</div>';sg.appendChild(d);
+  });
+  rec.history.forEach(h=>{
+    const d=new Date(h.date),L=LEVELS[h.level];
+    const when=d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+    const r=document.createElement("div");r.className="history-row";
+    r.innerHTML="<span>"+(L?L.icon+" "+L.name:h.level)+" · étape "+(h.stage==="a"?1:2)+"</span><span>"+h.correct+"/"+h.total+'</span><span class="stars">'+"★".repeat(h.stars)+"☆".repeat(3-h.stars)+"</span><span>"+when+"</span>";
+    hl.appendChild(r);
+  });
+}
+
+/* ---- événements ---- */
+function setName(){
+  state.name=$("student-name").value.trim();
+  try{localStorage.setItem(KN,state.name)}catch(e){}
+  refreshStars();
+}
+function init(){
+  const inp=$("student-name");
+  inp.addEventListener("change",setName);inp.addEventListener("blur",setName);
+  document.querySelectorAll(".stage-btn").forEach(b=>b.addEventListener("click",()=>{
+    state.name=inp.value.trim();start(b.dataset.level,b.dataset.stage);
+  }));
+  $("btn-quit").addEventListener("click",()=>show("screen-home"));
+  $("btn-replay").addEventListener("click",()=>start(state.level,state.stage));
+  $("btn-home").addEventListener("click",()=>show("screen-home"));
+  $("btn-back-home").addEventListener("click",()=>show("screen-home"));
+  $("btn-progress").addEventListener("click",()=>{
+    state.name=inp.value.trim();
+    if(!state.name){needName();return}
+    renderProgress();show("screen-progress");
+  });
+  load();
+  try{const n=localStorage.getItem(KN);if(n){inp.value=n;state.name=n}}catch(e){}
+  refreshStars();
+}
+init();
+})();
+</script>
+</body>
+</html>
